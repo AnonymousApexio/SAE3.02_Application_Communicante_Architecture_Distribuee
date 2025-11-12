@@ -1,8 +1,102 @@
-from sympy import isprime
-from random import choice
+# RSA Implementation Test (works but needs refactoring)
 
-class AlgorithmeRSA:
-    """
-    Clase d'implémentation de l'algorithme de chiffrage RSA
-    """
-    pass
+import random
+
+
+'''
+Euclid's algorithm for determining the greatest common divisor
+Use iteration to make it faster for larger integers
+'''
+def gcd(a, b):
+    while b != 0:
+        a, b = b, a % b
+    return a
+
+'''
+Euclid's extended algorithm for finding the multiplicative inverse of two numbers
+'''
+def multiplicative_inverse(e, phi):
+
+    t0, t1 = 0, 1
+    r0, r1 = phi, e
+    
+    while r1 != 0:
+        quotient = r0 // r1
+        t0, t1 = t1, t0 - quotient * t1
+        r0, r1 = r1, r0 - quotient * r1
+    
+    if r0 != 1:
+        raise ValueError("No multiplicative inverse exists")
+    
+    if t0 < 0:
+        t0 += phi
+        
+    return t0
+
+'''
+Tests to see if a number is prime.
+'''
+def is_prime(num):
+    if num == 2:
+        return True
+    if num < 2 or num % 2 == 0:
+        return False
+    for n in range(3, int(num**0.5)+2, 2):
+        if num % n == 0:
+            return False
+    return True
+
+def generate_keypair(p, q):
+    if not (is_prime(p) and is_prime(q)):
+        raise ValueError('Both numbers must be prime.')
+    elif p == q:
+        raise ValueError('p and q cannot be equal')
+  
+    n = p * q
+
+    phi = (p-1) * (q-1)
+
+    e = random.randrange(2, phi) 
+
+    g = gcd(e, phi)
+    while g != 1:
+        e = random.randrange(2, phi)
+        g = gcd(e, phi)
+
+    d = multiplicative_inverse(e, phi)
+    
+    return ((e, n), (d, n))
+
+def encrypt(pk, plaintext):
+   
+    key, n = pk  
+
+    cipher = [pow(ord(char), key, n) for char in plaintext] 
+    
+    return cipher
+
+def decrypt(pk, ciphertext):
+    key, n = pk
+
+    plain = [chr(pow(char, key, n)) for char in ciphertext] 
+
+    return ''.join(plain)
+    
+
+if __name__ == '__main__':
+    '''
+    Detect if the script is being run directly by the user
+    '''
+    print("RSA Encrypter/ Decrypter")
+    p = int(input("Enter a prime number (17, 19, 23, etc): "))
+    q = int(input("Enter another prime number (Not one you entered above): "))
+    print("Generating your public/private keypairs now . . .")
+    public, private = generate_keypair(p, q)
+    print("Your public key is", public, "and your private key is", private)
+    message = input("Enter a message to encrypt with your public key: ") 
+    encrypted_msg = encrypt(public, message) 
+    print("Your encrypted message is: ")
+    print(' '.join(map(lambda x: str(x), encrypted_msg)))
+    print("Decrypting message with private key", private, ". . .")
+    print("Your message is:")
+    print(decrypt(private, encrypted_msg)) 
