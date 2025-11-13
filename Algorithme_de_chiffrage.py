@@ -5,7 +5,6 @@ Implémentation manuelle sans bibliothèques externes de cryptographie
 
 import random
 import json
-from typing import Tuple, List, Union
 
 
 class CustomRSA:
@@ -60,7 +59,7 @@ class CustomRSA:
         return True
 
     @staticmethod
-    def generate_primes(bits: int = 16) -> Tuple[int, int]:
+    def generate_primes(bits: int = 16) -> tuple[int, int]:
         """
         Génère deux nombres premiers pour les clés RSA
         Utilise 64 bits par défaut pour des performances raisonnables
@@ -82,7 +81,7 @@ class CustomRSA:
         return p, q
 
     @staticmethod
-    def generate_keypair(p: int = None, q: int = None) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+    def generate_keypair(p: int = None, q: int = None) -> tuple[tuple[int, int], tuple[int, int]]:
         """
         Génère une paire de clés publique/privée RSA
         
@@ -113,7 +112,7 @@ class CustomRSA:
         return ((e, n), (d, n))
 
     @staticmethod
-    def encrypt(pk: Tuple[int, int], plaintext: Union[str, bytes]) -> List[int]:
+    def encrypt(pk: tuple[int, int], plaintext: list[str, bytes]) -> list[int]:
         """
         Chiffre un message avec la clé publique
         
@@ -136,7 +135,7 @@ class CustomRSA:
         return cipher
 
     @staticmethod
-    def decrypt(pk: Tuple[int, int], ciphertext: List[int]) -> str:
+    def decrypt(pk: tuple[int, int], ciphertext: list[int]) -> str:
         """
         Déchiffre un message avec la clé privée
         
@@ -157,7 +156,7 @@ class CustomRSA:
             raise ValueError("Erreur lors du déchiffrement - clé invalide ou données corrompues")
 
     @staticmethod
-    def encrypt_for_router(pk: Tuple[int, int], next_hop: str, payload: str) -> str:
+    def encrypt_for_router(pk: tuple[int, int], next_hop: str, payload: str) -> str:
         """
         Formate un message pour le routage onion
         Structure: {next_hop}|{payload_chiffré}
@@ -175,7 +174,7 @@ class CustomRSA:
         return json.dumps(encrypted_payload)
 
     @staticmethod
-    def decrypt_from_router(pk: Tuple[int, int], encrypted_message: str) -> Tuple[str, str]:
+    def decrypt_from_router(pk: tuple[int, int], encrypted_message: str) -> tuple[str, str]:
         """
         Déchiffre un message reçu par un routeur
         Extrait le next_hop et le payload
@@ -205,7 +204,7 @@ class KeyManager:
         self.public_keys = {}  # {router_id: (e, n)}
         self.private_keys = {}  # {router_id: (d, n)}
     
-    def generate_router_keys(self, router_id: str) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+    def generate_router_keys(self, router_id: str) -> tuple[tuple[int, int], tuple[int, int]]:
         """
         Génère une paire de clés pour un routeur
         """
@@ -214,13 +213,13 @@ class KeyManager:
         self.private_keys[router_id] = private_key
         return public_key, private_key
     
-    def get_public_key(self, router_id: str) -> Tuple[int, int]:
+    def get_public_key(self, router_id: str) -> tuple[int, int]:
         """
         Récupère la clé publique d'un routeur
         """
         return self.public_keys.get(router_id)
     
-    def get_private_key(self, router_id: str) -> Tuple[int, int]:
+    def get_private_key(self, router_id: str) -> tuple[int, int]:
         """
         Récupère la clé privée d'un routeur
         """
@@ -241,7 +240,7 @@ if __name__ == '__main__':
         
         # Test de chiffrement/déchiffrement
         print("2. Test chiffrement/déchiffrement...")
-        message = "Hello Onion Routing!"
+        message = "Message"
         encrypted = CustomRSA.encrypt(public_key, message)
         decrypted = CustomRSA.decrypt(private_key, encrypted)
         
