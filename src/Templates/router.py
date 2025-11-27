@@ -5,4 +5,3 @@ class Router:
     """
     Initialisation de la classe Router
     """
-    pass
