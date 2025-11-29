@@ -103,7 +103,7 @@ class RSA:
 
         # Choisi un nombre e valide
         e: int = random.randrange(3, phi)
-        while RSA._gcd(e, phi) != 1:
+        while RSA._pgcd(e, phi) != 1:
             e = random.randrange(3, phi)
 
         d: int = RSA._multiplicative_inverse(e, phi)
