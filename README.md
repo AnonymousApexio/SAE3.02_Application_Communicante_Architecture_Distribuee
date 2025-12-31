@@ -17,7 +17,7 @@ Ce projet est une implémentation d'un réseau de routage en oignon (type Tor) d
 - [Auteur](#-Auteurs)
 
 # 🏗 Architecture:
-Le système repose sur trois composants principaux (Voir [Documentation Technique](./Documentation/)):
+Le système repose sur trois composants principaux (Voir [Documentation Technique](./Documentation/Documentation_Technique_SAE_302.pdf)):
 
 ## Le Master (Annuaire):
 - Gère une base de données MariaDB des routeurs actifs et des logs.
@@ -45,11 +45,24 @@ Le système repose sur trois composants principaux (Voir [Documentation Techniqu
 # 📋 Prérequis:
 - Python 3.11 ou supérieur.
 
+Pour Windows:
 Installez depuis: https://www.python.org/downloads/
 
+
+Pour Linux:
+Utilisez votre gestionnaire de paquets. Par exemple, sur Debian/Ubuntu:
+```bash
+sudo apt update
+sudo apt install python3 python3-venv pip
+```
 Voir la version de votre installation avec:
 ```bash
 python --version
+```
+
+ou
+```bash
+python3 --version
 ```
 
 - Dépendance Python: Voir requirements.txt pour la liste complète.
@@ -61,6 +74,24 @@ Voir https://mariadb.org/download/ pour les instructions d'installation.
 - Système d'exploitation: Windows ou Linux (Testé sur VM).
 
 # 🚀 Installation:
+
+Installer Git si ce n'est pas déjà fait:
+# Windows
+Téléchargez depuis: https://git-scm.com/install/windows
+https://git-scm.com/install/linux
+https://git-scm.com/install/mac
+
+Note: Attention, lors de l'installation, choisissez d'ajouter Git au PATH pour un usage en ligne de commande. Et ouvrez Powershell ou CMD APRÈS l'installation pour que les changements soient pris en compte.
+
+# Linux
+```bash
+apt install git
+```
+# Mac
+```bash
+brew install git
+```
+
 Cloner le dépôt:
 ```bash
 git clone https://github.com/AnonymousApexio/SAE3.02_Application_Communicante_Architecture_Distribuee.git
@@ -69,6 +100,11 @@ Installer les dépendances: Je vous recommande d'utiliser un environnement virtu
 ```
 
 # Windows
+Note: Attention sous Windows, Powershell peut nécessiter l'activation de l'exécution de scripts. Ouvrez Powershell en mode administrateur et exécutez:
+```bash
+Set-ExecutionPolicy Unrestricted -Scope CurrentUser -Force
+```
+
 ```bash
 python -m venv venv
 .\venv\Scripts\activate
@@ -81,11 +117,21 @@ source venv/bin/activate
 ```
 
 # Installation
+Windows:
+```bash
+pip install -r .\requirements.txt
+```
+Linux / Mac:
+```bash
 pip install -r requirements.txt
-
+```
 
 # Configuration de la Base de Données
-Créer la base de données et les tables: Connectez-vous à votre console MariaDB/MySQL et exécutez les commandes suivantes:
+### Note: La procédure suivante assume que vous souhaitez installé tout le système par vous-même (Master, Routeurs, Clients). Pour des tests locaux, tout peut être lancé sur une seule machine avec des ports différents. Si vous avez déjà un serveur MariaDB/MySQL fonctionnel, et que vos routeurs sont activés (Comme par exemple si vous utilisé l'infrastructure d'une autre personne), vous pouvez directement passer à la section 3 de [Utilisation](#-Utilisation) et juste activé les clients.
+
+### Note: Je recommende d'utiliser MariaDB/MySQL sur Windows. 
+
+Créer la base de données et les tables: Connectez-vous à votre console MariaDB/MySQL et exécutez les commandes suivantes (Copiez-collez tout):
 
 ```SQL
 
@@ -100,7 +146,7 @@ CREATE TABLE IF NOT EXISTS routeurs (
     port INT NOT NULL,
     public_key_n TEXT NOT NULL,
     public_key_e TEXT NOT NULL,
-    last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAM
 );
 
 -- Table pour les logs anonymisés
@@ -116,7 +162,7 @@ Note: Si vous utilisez une authentification Windows/Plugin, assurez-vous de cré
 Configurer la connexion: Ouvrez le fichier src/Configuration/config.conf et adaptez les identifiants:
 
 ```ini
-host=<votre_hôte>
+host=<ip_machine_BDD>
 user=<votre_utilisateur>
 password=<votre_mot_de_passe>
 db_name=routage_couche
@@ -124,9 +170,41 @@ db_name=routage_couche
 
 
 # 🎮 Utilisation
+
+## Troubleshooting Graphique sous Linux:
+Note: Attention, si vous utilisez une machine linux, vous pourriez tombez sur des problèmes d'interface graphique avec PyQt6 (Problèmes entre le moteur Wayland ou X11). Si cela arrive. Essayez de réinstaller PyQt6 via pip:
+```bash
+pip uninstall PyQt6
+pip install PyQt6
+```
+
+### Note: Normalement si vous n'essayez pas d'exécuter l'interface graphique avec l'utilisateur root (Qui peut casser Qt), tout devrait bien fonctionner. Mais si vous avez des problèmes d'affichage sous Linux, essayez d'exécuter les commandes suivantes dans le terminal avant de lancer le client.py:
+
+Si cela ne fonctionne pas, essayez d'installer les dépendances graphiques manquantes via votre gestionnaire de paquets. Par exemple, sur Debian/Ubuntu:
+```bash
+nano /etc/gdm3/daemon.conf
+```
+
+Décommentez la ligne:
+```ini
+WaylandEnable=false
+```
+
+Et faites:
+```bash
+export XDG_RUNTIME_DIR=/run/user/$(id -u)
+
+export WAYLAND_DISPLAY=wayland-0
+export QT_QPA_PLATFORM=wayland
+
+python3 src/Templates/client.py 8001 -m <IP_MASTER>
+```
+
+## Démarrage des Composants:
+
 L'ordre de démarrage est important: Master -> Routeurs -> Clients.
 
-1. Démarrer le Serveur Master
+1. Démarrer le Serveur Master sur votre première machine:
 Le Master doit être lancé en premier pour accepter les enregistrements.
 
 ```Bash
@@ -134,9 +212,10 @@ Le Master doit être lancé en premier pour accepter les enregistrements.
 # Lance le master sur le port 9000 (par défaut)
 python src/Composants/master.py -p 9000
 ```
+Note: Le master utilise par défaut le port 9000. Si vous modifiez ce port, assurez-vous d'ajuster les paramètres des routeurs et clients en conséquence. 
+Le master doit toujours être arrêté avec Ctrl+C dans le terminal pour assurer une fermeture propre des connexions. (Fermer la fenêtre GUI ne suffit pas)
 
-
-2. Démarrer les Routeurs
+2. Démarrer les Routeurs sur votre seconde machine (ou plusieurs machines):
 Lancez plusieurs routeurs (minimum 3 pour un test réaliste) dans des terminaux et/ou machines séparés.
 
 ```Bash
@@ -152,7 +231,9 @@ python src/Templates/router.py R2 -m 127.0.0.1 -mp 9000 -p 8011
 python src/Templates/router.py R3 -m 127.0.0.1 -mp 9000 -p 8012
 ```
 
-3. Démarrer les Clients:  
+Les routeurs doivent également être arrêtés proprement avec Ctrl+C dans le terminal.
+
+3. Démarrer les Clients sur votre troisième machine (ou plusieurs machines):
 Lancez au minimum deux clients (un émetteur, un destinataire). (Démarrage en CLI mais utilisation via GUI)
 ```Bash
 # Syntaxe : python client.py [PORT_LOCAL] -m [IP_MASTER] -mp [PORT_MASTER]
@@ -164,7 +245,6 @@ python src/Templates/client.py 8001 -m 127.0.0.1
 
 # Client B (Port 8002)
 python src/Templates/client.py 8002 -m 127.0.0.1
-
 ```
 
 
@@ -181,6 +261,6 @@ Sur l'interface du Client A:
 - Le Client B recevra le message déchiffré.
 
 # 👥 Auteurs
-Projet réalisé dans le cadre de la SAÉ 3.02 (IUT Réseaux & Télécoms).
+Projet réalisé dans un cadre académique de la SAÉ 3.02 (IUT Réseaux & Télécoms).
 
 Amory Ryan - Maïtre d'oeuvre du projet

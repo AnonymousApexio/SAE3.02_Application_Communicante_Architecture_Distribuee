@@ -204,7 +204,7 @@ class ApplicationClient(QMainWindow):
         layout_du_status = QHBoxLayout()
         indicateur_etat = QFrame()
         indicateur_etat.setObjectName("Indicateur_etat")
-        label_etat = QLabel("Connecte au reseau")
+        label_etat = QLabel("Connecté au reseau")
         label_etat.setStyleSheet("color: #10b981; font-weight: 500;")
         layout_du_status.addWidget(indicateur_etat)
         layout_du_status.addWidget(label_etat)
@@ -251,7 +251,7 @@ class ApplicationClient(QMainWindow):
         label_master.setStyleSheet("color: #94a3b8; font-size: 11px;")
         bar_cote.addWidget(label_master)
         
-        label_connexion_local = QLabel(f"ecoute sur: 0.0.0.0:{self.port_client}")
+        label_connexion_local = QLabel(f"Écoute sur: 0.0.0.0:{self.port_client}")
         label_connexion_local.setStyleSheet("color: #94a3b8; font-size: 11px;")
         bar_cote.addWidget(label_connexion_local)
         
