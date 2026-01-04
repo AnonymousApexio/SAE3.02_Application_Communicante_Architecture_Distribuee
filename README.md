@@ -14,6 +14,10 @@ Ce projet est une implémentation d'un réseau de routage en oignon (type Tor) d
 
 - [Utilisation](#-Utilisation)
 
+- [Structure du projet](#structure-du-projet)
+
+- [Vidéo de démo](#)
+
 - [Auteur](#-Auteurs)
 
 # 🏗 Architecture:
@@ -168,6 +172,7 @@ password=<votre_mot_de_passe>
 db_name=routage_couche
 ```
 
+Note: Si vous recevez l'erreur "Erreur SQL: 2003: Can't connect to MySQL server on ':3306' (Errno 11001: getaddrinfo failed)", vos identifiants sont incorrecte.
 
 # 🎮 Utilisation
 
@@ -260,7 +265,35 @@ Sur l'interface du Client A:
 
 - Le Client B recevra le message déchiffré.
 
-# 👥 Auteurs
+# Structure du projet:
+
+```bash
+└── 📁SAE3.02_Application_Communicante_Architecture_Distribuee
+    └── 📁Documentation
+        ├── Documentation_Technique_SAE_302.pdf # Documentation technique de la SAE
+        ├── Fiche_Individuelle_SAE_302.pdf # Liste des compétences apprise/améliorer et conclusion de la SAE
+    └── 📁src
+        └── 📁Composants
+            ├── __init__.py
+            ├── Algorithme_de_chiffrage.py # Module du chiffrage RSA
+            ├── master.py # Programme du serveur maître
+        └── 📁Configuration
+            ├── config.conf # Fichier de configuration de la base de donnée
+        └── 📁Templates
+            ├── __init__.py
+            ├── client.py # Template pour le lancement d'un client
+            ├── router.py # Template pour le lancement d'un routeur
+        ├── __init__.py
+    ├── README.md # La page que vous êtes entrain de lire
+    └── requirements.txt # La liste des dépendances à installer
+```
+
+# Vidéo de démo:
+
+![Vidéo de démo](./Documentation/Video_SAE_302.mp4)
+
+
+# Auteur
 Projet réalisé dans un cadre académique de la SAÉ 3.02 (IUT Réseaux & Télécoms).
 
 Amory Ryan - Maïtre d'oeuvre du projet
