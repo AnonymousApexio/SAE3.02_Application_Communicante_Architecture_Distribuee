@@ -2,23 +2,23 @@ Projet SAE 3.02 : Architecture Multi-Distribuée & Routage en Oignon
 Ce projet est une implémentation d'un réseau de routage en oignon (type Tor) développé en Python. Il a pour but de démontrer les principes d'anonymisation des flux réseaux via une architecture distribuée comprenant un serveur maître (annuaire), des routeurs relais et des clients communicants.
 
 # Table des Matières:
-- [Architecture](#🏗-Architecture)
+- [Architecture](#-architecture)
 
-- [Fonctionnalités](#Fonctionnalités)
+- [Fonctionnalités](#fonctionnalités)
 
-- [Prérequis](#-Prérequis)
+- [Prérequis](#-prérequis)
 
 - [Installation](#-Installation)
 
 - [Configuration de la Base de Données](#Configuration-de-la-Base-de-Données)
 
-- [Utilisation](#-Utilisation)
+- [Utilisation](#-utilisation)
 
 - [Structure du projet](#structure-du-projet)
 
-- [Vidéo de démo](#)
+- [Vidéo de démo](#vidéo-de-démo)
 
-- [Auteur](#-Auteurs)
+- [Auteur](#auteur)
 
 # 🏗 Architecture:
 Le système repose sur trois composants principaux (Voir [Documentation Technique](./Documentation/Documentation_Technique_SAE_302.pdf)):
