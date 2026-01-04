@@ -290,7 +290,7 @@ Sur l'interface du Client A:
 
 # Vidéo de démo:
 
-![Vidéo de démo](./Documentation/Video_SAE_302.mp4)
+![Vidéo de démo](https://github.com/user-attachments/assets/fabaec63-44af-4d5c-bc4b-6ec53057754b)
 
 
 # Auteur
